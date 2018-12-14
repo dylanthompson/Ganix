@@ -1,0 +1,148 @@
+
+<html>
+
+<head>
+
+<script type="text/javascript" src="jquery-1.8.3.js"></script>
+<script type="text/javascript" src="jquery-ui-1.9.1.js"></script>
+<script type="text/javascript" src="ganix.js"></script>
+
+<link rel="stylesheet" type="text/css" href="jquery-ui-1.9.2.custom.css" ></link>
+
+<title>Ganix</title>
+
+<style type="text/css">
+
+.row label, .row input {
+	width: 50%;
+}
+
+.row {
+	padding-top: 18px;
+}
+
+.fixed-dialog{
+	position: fixed;
+	top: 50px;
+	left: 50px;
+}
+
+</style>
+
+<script>
+
+$(document).ready(function() {
+
+	$("#Interface").dialog({
+		dialogClass: 'fixed-dialog',
+		position: { my: "right top", at: "right top", of: window }
+	});
+	
+	$(".ui-dialog-titlebar-close").remove();
+
+	$('#zoom').slider({
+		slide: function(event, ui) {
+			game.view.setScale($('#zoom').slider('value'));
+		},
+		change: function(event, ui) {
+			game.view.setScale($('#zoom').slider('value'));
+		},
+		value: 64,
+		min:1,
+		max:128
+	});
+	
+	$('#speed').slider({
+		slide: function(event, ui) {
+			game.model.setSpeed($('#speed').slider('value'));
+		},
+		change: function(event, ui) {
+			game.model.setSpeed($('#speed').slider('value'));
+		},
+		value: 150,
+		min:1,
+		max:300
+	});
+	
+	var options = { 
+		worldSize: parseInt($('#worldSize').val()),
+		worldTickSpeed: $("#speed").slider("option", "value"),
+		viewScale: $("#zoom").slider("option", "value"),
+		viewEffectLifespan: $('#viewEffectLifespan').val(),
+		startingPopulation: $('#startingPopulation').val()
+	}
+	
+	var game = new GanixGame(options);
+
+	$("#resetButton").on('click', function() {
+	
+		var options = { 
+			worldSize: $('#worldSize').val(),
+			worldTickSpeed: $("#speed").slider("option", "value"),
+			viewScale: $("#zoom").slider("option", "value"),
+			viewEffectLifespan: $('#viewEffectLifespan').val(),
+			startingPopulation: $('#startingPopulation').val()
+		}
+	
+		game.stop();
+		
+		game = new GanixGame(options);
+	});
+	
+});
+
+</script>
+
+</head>
+
+<body>
+
+<div id="Interface">
+
+	<form>
+
+		Zoom
+		<div id="zoom">
+		</div>
+
+		Game Speed
+		<div id="speed">
+		</div>
+
+		<div>
+		
+			<div class="row">
+				<label for="startingPopulation">Starting Population</label>
+				<input name="startingPopulation" id="startingPopulation" value="100"></input>
+			</div>
+			
+			<div class="row">
+				<label for="worldSize">Size of World</label>
+				<input name="worldSize" id="worldSize" value="15"></input>
+			</div>
+			
+			<div class="row">
+				<label for="viewEffectLifespan">Effect Delay</label>
+				<input name="viewEffectLifespan" id="viewEffectLifespan" value="5"></input>
+			</div>
+			
+			
+			<div class="row">
+				<button type="button" id="resetButton">Reset</button>
+			</div>
+			
+		</div>
+
+	</form>
+
+</div>
+
+<div id="GameContainer">
+	<canvas id="GanixCanvas" width="5000" height="5000" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+	<canvas id="EffectsCanvas" width="5000" height="5000" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+</div>
+
+
+<body>
+
+</html>
